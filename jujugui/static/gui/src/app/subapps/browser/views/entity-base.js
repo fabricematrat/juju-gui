@@ -108,9 +108,11 @@ YUI.add('subapp-browser-entitybaseview', function(Y) {
        @return {String} Bazaar URL.
      */
     _getSourceLink: function(lp_url) {
-      var url = lp_url.replace('lp:', 'http://bazaar.launchpad.net/');
-      // Append the file-browsing part.
-      return url + '/files';
+      if (lp_url != null) {
+        var url = lp_url.replace('lp:', 'http://bazaar.launchpad.net/');
+        // Append the file-browsing part.
+        return url + '/files';
+      }
     },
 
     /**
