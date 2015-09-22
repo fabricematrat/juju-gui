@@ -12,9 +12,16 @@ var module = module;
 
 (function (exports) {
 
+    //TODO add docs, esp for bakery
+    var env = function(url, bakery) {
+        jemUrl = url + '/v1';
+        this.listEnvironments = function() {};
+        this.getEnvironment = function () {};
+    };
+
     var jujulib = {
         charmstore: function() {},
-        environment: function() {},
+        environment: env,
         identity: function() {}
     };
 
