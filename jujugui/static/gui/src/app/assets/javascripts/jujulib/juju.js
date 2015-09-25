@@ -29,7 +29,7 @@ var module = module;
         };
 
         this.getEnvironment = function (username, envName, success, failure) {
-            var url = ['jemUrl', 'env', 'username', 'envName'].join('/');
+            var url = [jemUrl, 'env', username, envName].join('/');
             _makeRequest(url, function(xhr) {
                 var data = JSON.parse(xhr.target.responseText);
                 success(data);
