@@ -61,7 +61,6 @@ var module = module;
         this.listEnvironments = function(success, failure) {
             _makeRequest(jemUrl + '/env', function(xhr) {
                 var data = JSON.parse(xhr.target.responseText);
-                debugger;
                 success(data.environments);
             }, failure);
         };
