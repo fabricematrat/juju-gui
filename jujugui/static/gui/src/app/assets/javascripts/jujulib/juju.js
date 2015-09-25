@@ -12,11 +12,29 @@ var module = module;
 
 (function (exports) {
 
+
     //TODO add docs, esp for bakery
     var env = function(url, bakery) {
-        jemUrl = url + '/v1';
-        this.listEnvironments = function() {};
-        this.getEnvironment = function () {};
+        var jemUrl = url + '/v1';
+
+        var _makeRequest = function(path, success, failure) {
+            bakery.sendGetRequest(path, null, success, failure);
+        };
+
+        this.listEnvironments = function(success, failure) {
+            _makeRequest(jemUrl + '/env', function(xhr) {
+                var data = JSON.parse(xhr.target.responseText);
+                success(data.environments);
+            }, failure);
+        };
+
+        this.getEnvironment = function (username, envName, success, failure) {
+            var url = ['jemUrl', 'env', 'username', 'envName'].join('/');
+            _makeRequest(url, function(xhr) {
+                var data = JSON.parse(xhr.target.responseText);
+                success(data);
+            }, failure);
+        };
     };
 
     var jujulib = {
