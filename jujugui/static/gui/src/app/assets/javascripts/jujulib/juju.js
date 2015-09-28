@@ -29,9 +29,9 @@ var module = module;
      * Initializer
      *
      * @function environment
-     * @param url {String} The url, including scheme and port, of the JEM instance.
+     * @param url {String} The URL, including scheme and port, of the JEM instance.
      * @param bakery {Object} A bakery object for communicating with the JEM instance.
-     * @returns {Object}
+     * @returns {Object} A client object for making JEM API calls.
      */
     var environment = function(url, bakery) {
         var jemUrl = url + '/v1';
@@ -42,11 +42,16 @@ var module = module;
          * @private _makeRequest
          * @param path {String} The JEM endpoint to make the request from,
          *     e.g. '/env'
-         * @param success {function} A callback to be called on success.
-         * @param failure {function} A callback to be called on failure.
+         * @param success {function} A callback to be called on success. Takes
+         *     an xhr object as its only parameter.
+         * @param failure {function} A callback to be called on failure. Takes
+         *     an xhr object as its only parameter.
          */
         var _makeRequest = function(path, success, failure) {
-            bakery.sendGetRequest(path, null, success, failure);
+            bakery.sendGetRequest(path, null, function(xhr) {
+                var data = JSON.parse(xhr.target.responseText);
+                success(data);
+            }, failure);
         };
 
         /**
@@ -54,13 +59,13 @@ var module = module;
          *
          * @public listEnvironments
          * @param success {function} A callback to be called on success. Should
-         *     take an array of environments as its one parameter.
+         *     take an array of objects containing Juju environment data as its
+         *     one parameter.
          * @param failure {function} A callback to be called on failure. Should
          *     take an error message as its one parameter.
          */
         this.listEnvironments = function(success, failure) {
-            _makeRequest(jemUrl + '/env', function(xhr) {
-                var data = JSON.parse(xhr.target.responseText);
+            _makeRequest(jemUrl + '/env', function(data) {
                 success(data.environments);
             }, failure);
         };
@@ -78,10 +83,7 @@ var module = module;
          */
         this.getEnvironment = function (username, envName, success, failure) {
             var url = [jemUrl, 'env', username, envName].join('/');
-            _makeRequest(url, function(xhr) {
-                var data = JSON.parse(xhr.target.responseText);
-                success(data);
-            }, failure);
+            _makeRequest(url, success, failure);
         };
     };
 
