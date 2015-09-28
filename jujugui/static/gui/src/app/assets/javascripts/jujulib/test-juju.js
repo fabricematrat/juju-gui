@@ -8,6 +8,10 @@ chai.config.truncateThreshold = 0;
 describe('jujulib', function() {
 
     describe('environment manager', function() {
+        var _makeXHRRequest = function(obj) {
+            return {target: {responseText: JSON.stringify(obj)}};
+        };
+
         it('exists', function() {
             var env = new window.jujulib.environment();
             assert.isTrue(env instanceof window.jujulib.environment);
@@ -16,14 +20,18 @@ describe('jujulib', function() {
         it('can list environments', function(done) {
             var bakery = {
                 sendGetRequest: function(path, ignore, success, failure) {
-                    success({target: {responseText: '{"environments": ["foo"]}'}});
+                    var xhr = _makeXHRRequest({environments: ["foo"]});
+                    success(xhr);
                 }
             };
             var env = new window.jujulib.environment('http://example.com', bakery);
             env.listEnvironments(function(data) {
                 assert.deepEqual(data, ['foo']);
                 done();
-            }, function() {});
+            }, function() {
+                assert.fail('failure callback should not have been called.');
+                done();
+            });
         });
 
         it('can handle errors listing environments', function(done) {
@@ -35,7 +43,8 @@ describe('jujulib', function() {
             };
             var env = new window.jujulib.environment('http://example.com', bakery);
             env.listEnvironments(function(data) {
-                assert.fail('success callback should not have been called');
+                assert.fail('success callback should not have been called.');
+                done();
             }, function(error) {
                 assert.equal(error, err);
                 done();
@@ -46,7 +55,8 @@ describe('jujulib', function() {
             var bakery = {
                 sendGetRequest: function(path, ignore, success, failure) {
                     assert.equal(path, 'http://example.com/v1/env/rose/fnord')
-                    success({target: {responseText: '{"uuid": "foo"}'}});
+                    var xhr = _makeXHRRequest({uuid: "foo"});
+                    success(xhr);
                 }
             };
             var env = new window.jujulib.environment('http://example.com', bakery);
