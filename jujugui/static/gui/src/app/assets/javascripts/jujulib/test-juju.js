@@ -22,21 +22,55 @@ describe('jujulib', function() {
             var env = new window.jujulib.environment('http://example.com', bakery);
             env.listEnvironments(function(data) {
                 assert.deepEqual(data, ['foo']);
-                done(); 
+                done();
             }, function() {});
         });
+
+        it('can handle errors listing environments', function(done) {
+            var err = 'bad wolf';
+            var bakery = {
+                sendGetRequest: function(path, ignore, success, failure) {
+                    failure(err);
+                }
+            };
+            var env = new window.jujulib.environment('http://example.com', bakery);
+            env.listEnvironments(function(data) {
+                assert.fail('success callback should not have been called');
+            }, function(error) {
+                assert.equal(error, err);
+                done();
+            });
+        });
+
         it('can get environment data', function(done) {
             var bakery = {
                 sendGetRequest: function(path, ignore, success, failure) {
-                    assert.equal(path, 'http://example.com/v1/env/rose/badwolf')
+                    assert.equal(path, 'http://example.com/v1/env/rose/fnord')
                     success({target: {responseText: '{"uuid": "foo"}'}});
                 }
             };
             var env = new window.jujulib.environment('http://example.com', bakery);
-            env.getEnvironment('rose', 'badwolf', function(data) {
+            env.getEnvironment('rose', 'fnord', function(data) {
                 assert.deepEqual(data, {uuid: 'foo'});
-                done(); 
+                done();
             }, function() {});
+        });
+
+        it('can handle errors getting environment data', function(done) {
+            var err = 'bad wolf';
+            var bakery = {
+                sendGetRequest: function(path, ignore, success, failure) {
+                    assert.equal(path, 'http://example.com/v1/env/rose/fnord')
+                    failure(err);
+                }
+            };
+            var env = new window.jujulib.environment('http://example.com', bakery);
+            env.getEnvironment('rose', 'fnord', function(data) {
+                assert.fail('success callback should not have been called');
+            }, function(error) {
+                assert.equal(error, err);
+                done();
+            });
         });
     });
 
