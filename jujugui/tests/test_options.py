@@ -20,6 +20,7 @@ class TestUpdate(unittest.TestCase):
         'jujugui.sandbox': False,
         'jujugui.socket_path': None,
         'jujugui.user': '',
+        'jujugui.jem_url': None,
     }
 
     def test_default_values(self):
@@ -40,6 +41,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.sandbox': True,
             'jujugui.socket_path': '1.2.3.4:17070',
             'jujugui.user': 'who',
+            'jujugui.jem_url': 'http://1.2.3.4:8082'
         }
         settings = {
             'jujugui.auth': 'blob',
@@ -52,6 +54,7 @@ class TestUpdate(unittest.TestCase):
             'jujugui.sandbox': 'on',
             'jujugui.socket_path': '1.2.3.4:17070',
             'jujugui.user': 'who',
+            'jujugui.jem_url': 'http://1.2.3.4:8082'
         }
         options.update(settings)
         self.assertEqual(expected_settings, settings)
