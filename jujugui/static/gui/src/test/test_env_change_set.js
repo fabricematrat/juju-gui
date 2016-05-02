@@ -1195,10 +1195,21 @@ describe('Environment Change Set', function() {
         units.add({
           id: 'django/1',
           machine: 'new1',
-          charmUrl: 'cs:utopic/django-42'
+          charmUrl: 'cs:utopic/django-42',
+          series: 'utopic'
         });
         // Execute the command preparation.
-        command.prepare({units: units});
+        command.prepare({units: units,
+          charms: {
+            getById: function() {
+              return {
+                get: function() {
+                  return "utopic";
+                }
+              }
+            }
+          }
+        });
         // The series is now set for the new machine call.
         assert.strictEqual(command.args[0][0].series, 'utopic');
       });
@@ -1636,7 +1647,7 @@ describe('Environment Change Set', function() {
         var lazyDeploy = testUtils.makeStubMethod(ecs, '_lazyDeploy');
         this._cleanups.push(lazyDeploy.reset);
         var callback = testUtils.makeStubFunction();
-        var args = [1, 2, 3, 4, 5, 6, 7, callback, { immediate: true}];
+        var args = [1, 2, 3, 4, 5, 6, 7, 'precise', callback, { immediate: true}];
         envObj.deploy.apply(envObj, args);
         assert.equal(envObj._deploy.calledOnce(), true);
         var deployArgs = envObj._deploy.lastArguments();
@@ -1905,7 +1916,25 @@ describe('Environment Change Set', function() {
       // Set up a unit used for tests and the ecs database.
       unit = {charmUrl: 'cs:utopic/django-42'};
       units = new Y.juju.models.ServiceUnitList();
-      ecs.set('db', {units: units});
+      ecs.set('db', {
+        units: units,
+        charms: {
+          getById: function(charmUrl) {
+            if (charmUrl.indexOf('utopic') > 0) {
+              return {
+                get: function () {
+                  return 'utopic';
+                }
+              }
+            } else {
+              return {
+                get: function () {
+                  return 'trusty';
+                }
+              }
+            }
+          }
+        }});
     });
 
     afterEach(function() {

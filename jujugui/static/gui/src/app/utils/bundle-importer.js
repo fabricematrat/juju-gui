@@ -472,6 +472,7 @@ YUI.add('bundle-importer', function(Y) {
               0, // Number of units.
               constraints, // Constraints.
               null, // toMachine.
+              null, // series
               function(ghostService) {
                 var name = ghostService.get('name');
                 ghostService.setAttrs({

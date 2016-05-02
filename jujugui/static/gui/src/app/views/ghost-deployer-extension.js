@@ -62,6 +62,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
       ghostService.set('config', config);
       var serviceName = ghostService.get('name');
       var charmId = charm.get('id');
+      var series = charm.get('series');
       var constraints = {};
       this.env.deploy(
           charmId,
@@ -71,6 +72,7 @@ YUI.add('ghost-deployer-extension', function(Y) {
           0, // Number of units.
           constraints,
           null, // toMachine.
+          series,
           Y.bind(this._deployCallbackHandler, this, ghostService),
           // Options used by ECS, ignored by environment.
           {modelId: ghostServiceId});

@@ -53,9 +53,11 @@ YUI.add('juju-charm-models', function(Y) {
             storeId;
         Y.Array.map(pairs, function(pair) { result[pair[0]] = pair[1]; });
         storeId = [
-          result.series,
           result.package_name + (result.revision ? '-' + result.revision : '')
         ];
+        if (result.series) {
+          storeId.unshift(result.series);
+        }
         if (result.owner) {
           storeId.unshift('~' + result.owner);
         }
@@ -166,6 +168,16 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(parts, function(value, key) {
         this.set(key, value);
       }, this);
+      if (cfg.supportedseries !== undefined && cfg.supportedseries.length > 0) {
+        this.set('series', cfg.supportedseries[0]);
+      }
+      if (cfg.owner) {
+        this.set('owner', cfg.owner);
+      }
+      this.set('unpublished', cfg.unpublished);
+      this.set('development', cfg.development);
+      this.set('stable', cfg.stable);
+      this.set('resources', cfg.resources);
     },
 
     sync: function(action, options, callback) {

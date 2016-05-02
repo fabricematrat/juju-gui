@@ -459,6 +459,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           {},
           null,
+          'precise',
           callback,
           {immediate: true});
     });
@@ -491,6 +492,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           constraints,
           null,
+          'precise',
           callback,
           {immediate: true});
     });
@@ -504,7 +506,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         done();
       };
       env.deploy('cs:precise/wordpress-27', undefined, undefined, undefined,
-          1, null, null, callback, {immediate: true});
+          1, null, null, 'precise', callback, {immediate: true});
     });
 
     it('can add machines', function(done) {
@@ -988,6 +990,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           null,
           null,
+          'precise',
           localCb,
           {immediate: true});
     }
@@ -1043,6 +1046,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           1,
           null,
           null,
+          'precise',
           localCb,
           {immediate: true});
     }
@@ -1288,10 +1292,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can add a relation (integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-27', null, null, null, 1, null, null,
+          'cs:precise/wordpress-27', null, null, null, 1, null, null, 'precise',
           function() {
             env.deploy(
-                'cs:precise/mysql-26', null, null, null, 1, null, null,
+                'cs:precise/mysql-26', null, null, null, 1, null, null, 'precise',
                 function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];
@@ -1410,10 +1414,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('can remove a relation(integration)', function(done) {
       env.connect();
       env.deploy(
-          'cs:precise/wordpress-27', null, null, null, 1, null, null,
+          'cs:precise/wordpress-27', null, null, null, 1, null, null, 'precise',
           function() {
             env.deploy(
-                'cs:precise/mysql-26', null, null, null, 1, null, null,
+                'cs:precise/mysql-26', null, null, null, 1, null, null, 'precise',
                 function() {
                   var endpointA = ['wordpress', {name: 'db', role: 'client'}],
                       endpointB = ['mysql', {name: 'db', role: 'server'}];

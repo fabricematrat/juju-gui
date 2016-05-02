@@ -72,8 +72,12 @@ describe('Entity Extension', function() {
       entityType: 'charm',
       series: 'trusty',
       tags: ['database', 'application'],
+      development: true,
+      stable: true,
+      unpublished: true,
+      resources: []
     };
-    var iconPath = 'v4/' + entityModel.get('id') + '/icon.svg';
+    var iconPath = 'v5/' + entityModel.get('id') + '/icon.svg';
     utils.makeStubMethod(utils, 'getIconPath', iconPath);
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
@@ -92,7 +96,11 @@ describe('Entity Extension', function() {
       url: 'http://example.com/',
       iconPath: iconPath,
       series: 'trusty',
-      tags: ['database', 'application']
+      tags: ['database', 'application'],
+      development: true,
+      stable: true,
+      unpublished: true,
+      resources: []
     };
     assert.deepEqual(expected, entity,
                      'charm POJO did not match expected object');
@@ -105,6 +113,10 @@ describe('Entity Extension', function() {
       owner: 'foobar-charmers',
       entityType: 'bundle',
       services: [],
+      development: true,
+      stable: true,
+      unpublished: true,
+      resources: []
     };
     entityModel.setAttrs(attrs);
     var entity = entityModel.toEntity();
@@ -123,8 +135,12 @@ describe('Entity Extension', function() {
       url: 'http://example.com/',
       // no staticURL is defined on window.juju_config.staticURL so this
       // path should not include a staticURL prefix.
-      iconPath: 'static/gui/build/app/assets/images/non-sprites/bundle.svg',
-      services: []
+      iconPath: '/static/gui/build/app/assets/images/non-sprites/bundle.svg',
+      services: [],
+      development: true,
+      stable: true,
+      unpublished: true,
+      resources: []
     };
     assert.deepEqual(expected, entity,
                      'bundle POJO did not match expected object');

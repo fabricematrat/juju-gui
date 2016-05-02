@@ -1,0 +1,457 @@
+{
+  "Id": "cs:trusty/memcached-13",
+  "Meta": {
+    "charm-config": {
+      "Options": {
+        "allow-ufw-ip6-softfail": {
+          "Type": "boolean",
+          "Description": "When this option is set to True the charm will disable the IPv6\nsupport in ufw in case ip6tables couldn't be activated, situations\nwhere this could happen is in a LXC container running on top of a\nhost that doesn't have loaded the ip6_tables.\n\nIf this option is False (the default) and ip6_tables module couldn't\nbe loaded, the charm will fail to install.\n",
+          "Default": false
+        },
+        "connection-limit": {
+          "Type": "int",
+          "Description": "maximum simultaneous connections (memcached option -c)",
+          "Default": 1024
+        },
+        "disable-auto-cleanup": {
+          "Type": "boolean",
+          "Description": "do not remove things automatically from the cache on OOM\n(memcached option -M)\n",
+          "Default": false
+        },
+        "disable-cas": {
+          "Type": "boolean",
+          "Description": "disable use of CAS (and reduce the per-item size by 8 bytes)",
+          "Default": false
+        },
+        "disable-large-pages": {
+          "Type": "boolean",
+          "Description": "The charm will will try to use large pages if given more than 2GB of RAM. You may want to disable this behavior. (memcached option -L)",
+          "Default": false
+        },
+        "extra-options": {
+          "Type": "string",
+          "Description": "memcached has many other options documented in its man page. You may pass them here as a string which",
+          "Default": ""
+        },
+        "factor": {
+          "Type": "float",
+          "Description": "Use \u003cfactor\u003e as the multiplier for computing the sizes of memory\nchunks that items are stored in. A lower value may result in less\nwasted memory depending on the total amount of memory available\nand the distribution of item sizes. The default is 1.25.\n",
+          "Default": 1.25
+        },
+        "min-item-size": {
+          "Type": "int",
+          "Description": "Allocate a minimum of \u003csize\u003e bytes for the item key, value,\nand flags. The default  is  48.  If  you have  a  lot of small\nkeys and values, you can get a significant memory efficiency\ngain with a lower value. If you use a high chunk growth factor\n(-f option),  on  the  other  hand,  you  may  want  to\nincrease  the  size  to  allow  a  bigger percentage of your\nitems to fit in the most densely packed (smallest) chunks.\n(memcached option -n)\n",
+          "Default": -1
+        },
+        "nagios_context": {
+          "Type": "string",
+          "Description": "Used by the nrpe-external-master subordinate charm.\nA string that will be prepended to instance name to set the host name\nin nagios. So for instance the hostname would be something like:\n    juju-memcached-0\nIf you're running multiple environments with the same services in them\nthis allows you to differentiate between them.\n",
+          "Default": "juju"
+        },
+        "repcached": {
+          "Type": "boolean",
+          "Description": "Enable memcached replication\n",
+          "Default": false
+        },
+        "repcached_origin": {
+          "Type": "string",
+          "Description": "Memcached + Repcached package location\n",
+          "Default": "ppa:niedbalski/memcached-repcached"
+        },
+        "repcached_port": {
+          "Type": "string",
+          "Description": "TCP port number for replication (default: 11212)\n",
+          "Default": "11212"
+        },
+        "request-limit": {
+          "Type": "int",
+          "Description": "limit of requests a single client can make at one time\n(memcached option -R) -1 takes memcached default (20)\n",
+          "Default": -1
+        },
+        "size": {
+          "Type": "int",
+          "Description": "Size of memcache pool in MiB (memcached option -m)",
+          "Default": 768
+        },
+        "slab-page-size": {
+          "Type": "int",
+          "Description": "Override the size of each slab page in bytes. In mundane\nwords, it adjusts  the  maximum  item  size that  memcached\nwill  accept.  You can use the suffixes K and M to specify\nthe size as well, so use 2000000 or 2000K or 2M if you want\na maximum size of 2 MB per object.   It  is  not  recommended\nto raise this limit above 1 MB due just to performance reasons.\nThe default value is 1 MB. (memcached option -I) -1 takes\nthe memcached default.\n",
+          "Default": -1
+        },
+        "tcp-port": {
+          "Type": "int",
+          "Description": "TCP port to listen on. (memcached option -p)",
+          "Default": 11211
+        },
+        "threads": {
+          "Type": "int",
+          "Description": "number of threads to use. default is 4. (memcached option -t)",
+          "Default": -1
+        },
+        "udp-port": {
+          "Type": "int",
+          "Description": "UDP port to listen on (memcached option -U)",
+          "Default": 0
+        }
+      }
+    },
+    "charm-metadata": {
+      "Name": "memcached",
+      "Summary": "A high-performance memory object caching system",
+      "Description": "memcached optimizes specific high-load serving applications that are designed to take advantage of its versatile no-locking memory access system. Clients are available in several different programming languages, to suit the needs of the specific application. Traditionally this has been used in mod_perl apps to avoid storing large chunks of data in Apache memory, and to share this burden across several machines.",
+      "Subordinate": false,
+      "Provides": {
+        "cache": {
+          "Name": "cache",
+          "Role": "provider",
+          "Interface": "memcache",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        },
+        "local-monitors": {
+          "Name": "local-monitors",
+          "Role": "provider",
+          "Interface": "local-monitors",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "container"
+        },
+        "monitors": {
+          "Name": "monitors",
+          "Role": "provider",
+          "Interface": "monitors",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        },
+        "munin": {
+          "Name": "munin",
+          "Role": "provider",
+          "Interface": "munin-node",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "global"
+        },
+        "nrpe-external-master": {
+          "Name": "nrpe-external-master",
+          "Role": "provider",
+          "Interface": "nrpe-external-master",
+          "Optional": false,
+          "Limit": 0,
+          "Scope": "container"
+        }
+      },
+      "Peers": {
+        "cluster": {
+          "Name": "cluster",
+          "Role": "peer",
+          "Interface": "memcached-replication",
+          "Optional": false,
+          "Limit": 1,
+          "Scope": "global"
+        }
+      },
+      "Format": 1,
+      "OldRevision": 0,
+      "Tags": [
+        "system"
+      ],
+      "min-juju-version": "0.0.0"
+    },
+    "extra-info": {
+      "bzr-digest": "adam.israel@gmail.com-20160302232839-13zsfuzxpeqzcjnu",
+      "bzr-owner": "charmers",
+      "bzr-url": "lp:~charmers/charms/trusty/memcached/trunk",
+      "legacy-download-stats": 1869
+    },
+    "manifest": [
+      {
+        "Name": "revision",
+        "Size": 2
+      },
+      {
+        "Name": "Makefile",
+        "Size": 1054
+      },
+      {
+        "Name": "README.md",
+        "Size": 3636
+      },
+      {
+        "Name": "charm-helpers.yaml",
+        "Size": 135
+      },
+      {
+        "Name": "config.yaml",
+        "Size": 4735
+      },
+      {
+        "Name": "copyright",
+        "Size": 756
+      },
+      {
+        "Name": "files/nrpe-external-master/check_memcache.py",
+        "Size": 2220
+      },
+      {
+        "Name": "hooks/cache-relation-departed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/cache-relation-joined",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/charmhelpers/__init__.py",
+        "Size": 1378
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/__init__.py",
+        "Size": 677
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/hahelpers/__init__.py",
+        "Size": 677
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/hahelpers/apache.py",
+        "Size": 2673
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/hahelpers/cluster.py",
+        "Size": 9563
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/network/__init__.py",
+        "Size": 677
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/network/ip.py",
+        "Size": 14100
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/network/ovs/__init__.py",
+        "Size": 3604
+      },
+      {
+        "Name": "hooks/charmhelpers/contrib/network/ufw.py",
+        "Size": 10651
+      },
+      {
+        "Name": "hooks/charmhelpers/core/__init__.py",
+        "Size": 677
+      },
+      {
+        "Name": "hooks/charmhelpers/core/decorators.py",
+        "Size": 1785
+      },
+      {
+        "Name": "hooks/charmhelpers/core/fstab.py",
+        "Size": 4282
+      },
+      {
+        "Name": "hooks/charmhelpers/core/hookenv.py",
+        "Size": 24014
+      },
+      {
+        "Name": "hooks/charmhelpers/core/host.py",
+        "Size": 14475
+      },
+      {
+        "Name": "hooks/charmhelpers/core/services/__init__.py",
+        "Size": 737
+      },
+      {
+        "Name": "hooks/charmhelpers/core/services/base.py",
+        "Size": 14113
+      },
+      {
+        "Name": "hooks/charmhelpers/core/services/helpers.py",
+        "Size": 9740
+      },
+      {
+        "Name": "hooks/charmhelpers/core/strutils.py",
+        "Size": 1356
+      },
+      {
+        "Name": "hooks/charmhelpers/core/sysctl.py",
+        "Size": 1770
+      },
+      {
+        "Name": "hooks/charmhelpers/core/templating.py",
+        "Size": 2603
+      },
+      {
+        "Name": "hooks/charmhelpers/core/unitdata.py",
+        "Size": 14161
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/__init__.py",
+        "Size": 15224
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/archiveurl.py",
+        "Size": 5856
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/bzrurl.py",
+        "Size": 2745
+      },
+      {
+        "Name": "hooks/charmhelpers/fetch/giturl.py",
+        "Size": 2502
+      },
+      {
+        "Name": "hooks/cluster-relation-changed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/cluster-relation-joined",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/config-changed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/install",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/local-monitors-relation-changed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/memcached_hooks.py",
+        "Size": 11648
+      },
+      {
+        "Name": "hooks/memcached_utils.py",
+        "Size": 1222
+      },
+      {
+        "Name": "hooks/monitors-relation-changed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/munin-relation-changed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/nrpe-external-master-relation-changed",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/replication.py",
+        "Size": 2305
+      },
+      {
+        "Name": "hooks/start",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/stop",
+        "Size": 18
+      },
+      {
+        "Name": "hooks/upgrade-charm",
+        "Size": 18
+      },
+      {
+        "Name": "icon.svg",
+        "Size": 18948
+      },
+      {
+        "Name": "metadata.yaml",
+        "Size": 899
+      },
+      {
+        "Name": "monitors.yaml",
+        "Size": 115
+      },
+      {
+        "Name": "templates/memcached.conf",
+        "Size": 2069
+      },
+      {
+        "Name": "templates/munin-node.conf",
+        "Size": 1624
+      },
+      {
+        "Name": "templates/nrpe_check_memcached.cfg.tmpl",
+        "Size": 247
+      },
+      {
+        "Name": "templates/nrpe_export.cfg.tmpl",
+        "Size": 450
+      },
+      {
+        "Name": "test_requirements.txt",
+        "Size": 44
+      },
+      {
+        "Name": "tests/00_setup.sh",
+        "Size": 488
+      },
+      {
+        "Name": "tests/10_deploy_test.py",
+        "Size": 5755
+      },
+      {
+        "Name": "tests/20_deploy_replication_test.py",
+        "Size": 3768
+      },
+      {
+        "Name": "unit_tests/__init__.py",
+        "Size": 37
+      },
+      {
+        "Name": "unit_tests/test_memcached_hooks.py",
+        "Size": 18314
+      },
+      {
+        "Name": "unit_tests/test_utils.py",
+        "Size": 3074
+      }
+    ],
+    "published": {
+      "Info": [
+        {
+          "Channel": "development",
+          "Current": true
+        },
+        {
+          "Channel": "stable",
+          "Current": true
+        }
+      ]
+    },
+    "resources": [],
+    "stats": {
+      "ArchiveDownloadCount": 2483,
+      "ArchiveDownload": {
+        "Total": 2483,
+        "Day": 5,
+        "Week": 79,
+        "Month": 286
+      },
+      "ArchiveDownloadAllRevisions": {
+        "Total": 3427,
+        "Day": 8,
+        "Week": 112,
+        "Month": 494
+      }
+    },
+    "supported-series": {
+      "SupportedSeries": [
+        "trusty"
+      ]
+    },
+    "tags": {
+      "Tags": [
+        "system"
+      ]
+    }
+  }
+}

@@ -1391,6 +1391,9 @@ YUI.add('juju-view-utils', function(Y) {
   */
   utils.getName = function(id) {
     var parts = id.split('/');
+    if (parts.length == 1) {
+      parts = id.split('cs:');
+    }
     // The last part will be the name and version number e.g. juju-gui-0.
     var idParts = parts[parts.length - 1].split('-');
     // If the last part is numeric, it's the version number; remove it.
@@ -1500,7 +1503,8 @@ YUI.add('juju-view-utils', function(Y) {
               undefined, //config file content
               1, // number of units
               {}, //constraints
-              null); // toMachine
+              null,
+              charm.get ? charm.get('series') : charm.series); // toMachine
           this.fire('autoplaceAndCommitAll');
         }
       }.bind(this));

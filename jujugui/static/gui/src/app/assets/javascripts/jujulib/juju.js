@@ -401,7 +401,7 @@ var module = module;
      Provides access to the charmstore API.
    */
 
-  var charmstoreAPIVersion = 'v4';
+  var charmstoreAPIVersion = 'v5';
 
   /**
      Initializer
@@ -565,6 +565,24 @@ var module = module;
       if (meta['supported-series']) {
         processed.series = meta['supported-series']['SupportedSeries'];
       }
+      processed.unpublished = false;
+      processed.development = false;
+      processed.stable = false;
+      if (meta['published']) {
+        if (meta['published']['Info']) {
+          meta['published']['Info'].forEach(function(info){
+            if (info['Channel'] == 'stable' && info['Current']) {
+              processed.stable = true;
+            }
+            if (info['Channel'] == 'development' && info['Current']) {
+              processed.development = true;
+            }
+            if (info['Channel'] == 'unpublished' && info['Current']) {
+              processed.unpublished = true;
+            }
+          });
+        }
+      }
       // Convert the options keys to lowercase.
       if (charmConfig && typeof charmConfig.Options === 'object') {
         this._lowerCaseKeys(charmConfig.Options, charmConfig.Options, 0);
@@ -609,6 +627,20 @@ var module = module;
         delete processed.requires;
         processed.is_subordinate = !!metadata.Subordinate;
       }
+      if (meta['resources'] !== undefined) {
+        processed.resources = meta['resources'].map(function(element) {
+            var ext = element['Path'].split('.').pop();
+            if (ext === element['Path']) {
+              ext = '';
+            }
+            return {
+              revision: element['Revision'],
+              extension: ext,
+              name: element['Name']
+            }
+        })
+      }
+      this._lowerCaseKeys(processed.resources, processed.resources, 0)
       return processed;
     },
 
@@ -659,7 +691,7 @@ var module = module;
       entityId = entityId.replace('cs:', '');
       var filters = 'include=bundle-metadata&include=charm-metadata' +
                     '&include=charm-config&include=manifest&include=stats' +
-                    '&include=extra-info&include=tags';
+                    '&include=extra-info&include=tags&include=published&include=resources&include=supported-series';
       return _makeRequest(
           this.bakery,
           this._generatePath(entityId, filters, '/meta/any'),
@@ -702,7 +734,8 @@ var module = module;
           'include=bundle-metadata&' +
           'include=extra-info&' +
           'include=tags&' +
-          'include=stats';
+          'include=stats&' +
+          'include=published';
       var path = this._generatePath('search', qs);
       return _makeRequest(
           this.bakery,

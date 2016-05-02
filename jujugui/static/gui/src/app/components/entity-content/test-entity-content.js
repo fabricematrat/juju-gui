@@ -133,6 +133,7 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
+            {undefined}
             <div className="four-col">
               <juju.components.EntityContentRevisions
                 revisions={mockEntity.get('revisions')} />
@@ -235,6 +236,7 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
+            {undefined}
             <div className="four-col">
               <juju.components.EntityContentRevisions
                 revisions={mockEntity.get('revisions')} />
@@ -242,6 +244,119 @@ describe('EntityContent', function() {
           </div>
         </div>
         {undefined}
+      </div>
+    );
+    assert.deepEqual(output, expected);
+  });
+
+  it('can display a charm with resource', function() {
+    var apiUrl = 'http://example.com';
+    var renderMarkdown = sinon.spy();
+    var getFile = sinon.spy();
+    var changeState = sinon.spy();
+    var pluralize = sinon.spy();
+    var renderer = jsTestUtils.shallowRender(
+        <juju.components.EntityContent
+          apiUrl={apiUrl}
+          changeState={changeState}
+          entityModel={mockEntity}
+          getFile={getFile}
+          pluralize={pluralize}
+          renderMarkdown={renderMarkdown} />, true);
+    var option1 = {
+      description: 'Your username',
+      type: 'string',
+      default: 'spinach',
+      name: 'username'
+    };
+    var option2 = {
+      description: 'Your password',
+      type: 'string',
+      default: 'abc123',
+      name: 'password'
+    };
+    var instance = renderer.getMountedInstance();
+    var output = renderer.getRenderOutput();
+    var expected = (
+      <div className="entity-content">
+        <div className="row row--grey entity-content__description">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <p className="intro">Django framework.</p>
+            </div>
+            <div className="four-col entity-content__metadata">
+              <h4>Tags</h4>
+              <ul>
+                {_generateTagItem('database', instance._handleTagClick)}
+              </ul>
+            </div>
+            <div className="four-col entity-content__metadata last-col">
+              <h4>More information</h4>
+              <ul>
+                <li>
+                  <a
+                    href="https://bugs.launchpad.net/charms/+source/django"
+                    target="_blank">
+                    Bugs
+                  </a>
+                </li>
+                <li>
+                  <a href={'https://bugs.launchpad.net/charms/+source/' +
+                    'django/+filebug'} target="_blank">
+                    Submit a bug
+                  </a>
+                </li>
+                <li>
+                  <a href={'https://code.launchpad.net/~charmers/charms/' +
+                    'trusty/django/trunk'} target="_blank">
+                    Contribute
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="row">
+          <div className="inner-wrapper">
+            <div className="seven-col append-one">
+              <juju.components.EntityContentReadme
+                entityModel={mockEntity}
+                renderMarkdown={renderMarkdown}
+                getFile={getFile} />
+            </div>
+            <div className="four-col">
+              <juju.components.EntityContentRelations
+                changeState={changeState}
+                relations={mockEntity.get('relations')} />
+            </div>
+            <div className="four-col">
+              <juju.components.EntityFiles
+                apiUrl={apiUrl}
+                entityModel={mockEntity}
+                pluralize={pluralize} />
+            </div>
+            <div className="four-col">
+              <juju.components.EntityContentRevisions
+                revisions={mockEntity.get('revisions')} />
+            </div>
+          </div>
+        </div>
+        <div id="configuration"
+          className="row row--grey entity-content__configuration">
+          <div className="inner-wrapper">
+            <div className="twelve-col">
+              <h2 className="entity-content__header">Configuration</h2>
+              <dl>
+                <juju.components.EntityContentConfigOption
+                  key={option1.name}
+                  option={option1} />
+                <juju.components.EntityContentConfigOption
+                  key={option2.name}
+                  option={option2} />
+              </dl>
+            </div>
+          </div>
+        </div>
       </div>
     );
     assert.deepEqual(output, expected);
@@ -280,6 +395,7 @@ describe('EntityContent', function() {
                 entityModel={mockEntity}
                 pluralize={pluralize} />
             </div>
+            {undefined}
             {undefined}
           </div>
         </div>

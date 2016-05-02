@@ -1335,7 +1335,7 @@ YUI.add('juju-env-go', function(Y) {
       @method deploy
     */
     deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
-                     constraints, toMachine, callback, options) {
+                     constraints, toMachine, series, callback, options) {
       var ecs = this.get('ecs');
       var args = ecs._getArgs(arguments);
       if (options && options.immediate) {
@@ -1371,7 +1371,7 @@ YUI.add('juju-env-go', function(Y) {
       @return {undefined} Sends a message to the server only.
     */
     _deploy: function(charmUrl, serviceName, config, configRaw, numUnits,
-        constraints, toMachine, callback) {
+        constraints, toMachine, series, callback) {
       var serviceFacadeVersion = this.findFacadeVersion('Service');
 
       // Define the API callback.
@@ -1404,6 +1404,7 @@ YUI.add('juju-env-go', function(Y) {
       }
       var serviceParams = {
         ServiceName: serviceName,
+        Series: series,
         Config: stringifyObjectValues(config),
         ConfigYAML: configRaw,
         Constraints: constraints,
@@ -2755,7 +2756,7 @@ YUI.add('juju-env-go', function(Y) {
                       view/head:/server/guiserver/bundles/__init__.py#L322
     */
     getBundleChanges: function(bundleYAML, changesToken, callback) {
-      self = this;
+      var self = this;
       // Define callbacks for both legacy and new Juju API calls.
       var handleLegacy = function(userCallback, data) {
         if (!userCallback) {

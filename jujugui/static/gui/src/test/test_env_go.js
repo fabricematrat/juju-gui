@@ -1844,7 +1844,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     });
 
     it('successfully deploys a service', function() {
-      env.deploy('precise/mysql', null, null, null, null, null, null, null,
+      env.deploy('precise/mysql', null, null, null, null, null, null, 'precise', null,
           {immediate: true});
       msg = conn.last_message();
       var expected = {
@@ -1858,7 +1858,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Constraints: {},
           CharmUrl: 'precise/mysql',
           NumUnits: null,
-          ToMachineSpec: null
+          ToMachineSpec: null,
+          Series: 'precise'
         }]},
         RequestId: 1
       };
@@ -1867,8 +1868,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully deploys a service (version 2 API)', function() {
       env.set('facades', {'Service': [2]});
-      env.deploy('precise/mysql', null, null, null, null, null, null, null,
-          {immediate: true});
+      env.deploy('precise/mysql', null, null, null, null, null, null,
+        'precise', null, {immediate: true});
       msg = conn.last_message();
       var expected = {
         Type: 'Service',
@@ -1881,7 +1882,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Constraints: {},
           CharmUrl: 'precise/mysql',
           NumUnits: null,
-          ToMachineSpec: null
+          ToMachineSpec: null,
+          Series: 'precise'
         }]},
         RequestId: 1
       };
@@ -1890,8 +1892,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('successfully deploys a service (legacy API)', function() {
       env.set('facades', {});
-      env.deploy('precise/mysql', null, null, null, null, null, null, null,
-          {immediate: true});
+      env.deploy('precise/mysql', null, null, null, null, null, null,
+        'precise', null, {immediate: true});
       msg = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -1904,7 +1906,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Constraints: {},
           CharmUrl: 'precise/mysql',
           NumUnits: null,
-          ToMachineSpec: null
+          ToMachineSpec: null,
+          Series: 'precise'
         },
         RequestId: 1
       };
@@ -1925,12 +1928,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Constraints: {},
           CharmUrl: 'precise/mediawiki',
           NumUnits: null,
-          ToMachineSpec: null
+          ToMachineSpec: null,
+          Series: 'precise',
         }]},
         RequestId: 1
       };
       env.deploy('precise/mediawiki', null, config, null, null, null, null,
-          null, {immediate: true});
+          'precise', null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1948,12 +1952,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql',
           NumUnits: null,
-          ToMachineSpec: null
+          ToMachineSpec: null,
+          Series: 'precise'
         }]},
         RequestId: 1
       };
       env.deploy('precise/mysql', null, null, config_raw, null, null, null,
-          null, {immediate: true});
+          'precise', null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
@@ -1968,7 +1973,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         tags: 'tag1,tag2'
       };
       env.deploy('precise/mediawiki', null, null, null, 1, constraints, null,
-          null, {immediate: true});
+          'precise', null, {immediate: true});
       msg = conn.last_message();
       assert.deepEqual(msg.Params.Services[0].Constraints, {
         'cpu-cores': 1,
@@ -1992,12 +1997,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
           Constraints: {},
           CharmUrl: 'precise/mediawiki',
           NumUnits: 1,
-          ToMachineSpec: '42'
+          ToMachineSpec: '42',
+          Series: 'precise'
         }]},
         RequestId: 1
       };
-      env.deploy('precise/mediawiki', null, null, null, 1, null, '42', null,
-          {immediate: true});
+      env.deploy('precise/mediawiki', null, null, null, 1, null, '42',
+        'precise', null, {immediate: true});
       assert.deepEqual(conn.last_message(), expectedMessage);
     });
 
@@ -2006,7 +2012,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var err;
       var service_name;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
+          'precise/mysql', 'mysql', null, null, null, null, null, 'precise',
           function(data) {
             charm_url = data.charm_url;
             err = data.err;
@@ -2028,7 +2034,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       var err;
       var service_name;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
+          'precise/mysql', 'mysql', null, null, null, null, null, 'precise',
           function(data) {
             charm_url = data.charm_url;
             err = data.err;
@@ -2047,7 +2053,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     it('handles failed service deploy', function() {
       var err;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
+          'precise/mysql', 'mysql', null, null, null, null, null, 'precise',
           function(data) {
             err = data.err;
           }, {immediate: true});
@@ -2063,7 +2069,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       env.set('facades', env.defaultFacades);
       var err;
       env.deploy(
-          'precise/mysql', 'mysql', null, null, null, null, null,
+          'precise/mysql', 'mysql', null, null, null, null, null, 'precise',
           function(data) {
             err = data.err;
           }, {immediate: true});
@@ -2104,6 +2110,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
             Series: 'trusty',
             Constraints: constraints
           }]
+
         }
       };
       assert.deepEqual(conn.last_message(), expectedMsg);

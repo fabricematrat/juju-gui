@@ -217,6 +217,74 @@ YUI.add('entity-content', function() {
       }
     },
 
+    /**
+      We only show the resources when they are some.
+
+      @method _showEntityResources
+    */
+    _showEntityResources: function() {
+      var entityModel = this.props.entityModel;
+      var resources = entityModel.get('resources');
+
+      if (resources !== undefined && resources.length > 0) {
+        return (
+          <div className="four-col">
+            <div className="entity-files section" id="resources">
+              <h3 className="section__title">
+                {resources.length + ' ' + this.props.pluralize('resource',
+                resources.length)}
+              </h3>
+              <ul className="section__list">
+              {this._generateResources()}
+              </ul>
+            </div>
+          </div>);
+      }
+    },
+
+    /**
+      Generate the list of resources.
+
+      @method _generateResources
+      @return {Object} The resources markup.
+    */
+    _generateResources: function() {
+      var components = [];
+      var entityModel = this.props.entityModel;
+      var resources = entityModel.get('resources');
+      resources.forEach((resource) => {
+        if (resource.revision < 0) {
+          components.push(
+            <li className="entity-files__link section__list-item">
+            {resource.name}
+            </li>
+          );
+        } else {
+          var link = [this.props.apiUrl, entityModel.get('full_name'),
+            'resource', resource.name, resource.revision].join('/');
+          if (resource.extension) {
+            components.push(
+              <li className="entity-files__link section__list-item">
+                <a href={link} target='_blank'>
+                  { resource.name } ({ resource.extension })
+                </a>
+              </li>
+            );
+          } else {
+            components.push(
+              <li className="entity-files__link section__list-item">
+                <a href={link} target='_blank'>{ resource.name }</a>
+              </li>
+            );
+          }
+        }
+
+      }, this);
+      return components;
+    },
+
+
+
     render: function() {
       var entityModel = this.props.entityModel;
       return (
@@ -237,6 +305,7 @@ YUI.add('entity-content', function() {
                   entityModel={entityModel}
                   pluralize={this.props.pluralize} />
               </div>
+              {this._showEntityResources()}
               {this._showEntityRevisions()}
             </div>
           </div>

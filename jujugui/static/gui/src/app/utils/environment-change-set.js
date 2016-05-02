@@ -19,8 +19,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 YUI.add('environment-change-set', function(Y) {
-  var ns = Y.namespace('juju'),
-      utils = Y.namespace('juju.views.utils');
+  var ns = Y.namespace('juju');
 
   var name = 'environment-change-set';
 
@@ -1147,7 +1146,7 @@ YUI.add('environment-change-set', function(Y) {
           // This is safe since this kind of validation is done during
           // units' placement.
           var url = units[0].charmUrl;
-          this.args[0][0].series = utils.getSeries(url);
+          this.args[0][0].series = db.charms.getById(url).get('series');
         },
         /**
           Replace changeSet keys with real machine IDs returned from the call.
@@ -1345,7 +1344,8 @@ YUI.add('environment-change-set', function(Y) {
       @return {String} A validation error or null if no errors occurred.
     */
     validateUnitPlacement: function(unit, machine) {
-      var unitSeries = utils.getSeries(unit.charmUrl);
+      var db = this.get('db');
+      var unitSeries = db.charms.getById(unit.charmUrl).get('series');
       if (machine.series) {
         // This is a real provisioned machine. Ensure its series matches the
         // unit series.
@@ -1360,7 +1360,8 @@ YUI.add('environment-change-set', function(Y) {
       var error = null;
       var db = this.get('db');
       db.units.filterByMachine(machine.id).some(function(existingUnit) {
-        var existingUnitSeries = utils.getSeries(existingUnit.charmUrl);
+        var existingUnitSeries =
+          db.charms.getById(existingUnit.charmUrl).get('series');
         if (existingUnitSeries !== unitSeries) {
           error = 'machine ' + machine.id + ' already includes units with a ' +
               'different series: ' + existingUnitSeries;
@@ -1384,6 +1385,5 @@ YUI.add('environment-change-set', function(Y) {
   requires: [
     'base',
     'base-build',
-    'juju-view-utils'
   ]
 });

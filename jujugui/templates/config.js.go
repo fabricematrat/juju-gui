@@ -6,7 +6,7 @@ var juju_config = {
     "apiAddress": "wss://{{.host}}",
     "socketTemplate": "{{.socket}}",
     "socket_protocol": "wss",
-    "charmstoreAPIPath": "v4",
+    "charmstoreAPIPath": "v5",
     "charmstoreURL": "https://api.jujucharms.com/charmstore/",
     "interactiveLogin": true,
     "html5": true,

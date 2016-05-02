@@ -76,6 +76,9 @@ describe('EntityHeader', function() {
                 <li className="entity-header__series">
                   trusty
                 </li>
+                <li className="entity-header__by">
+                  Unpublished
+                </li>
               </ul>
               <ul className="entity-header__social-list">
                 <li>
@@ -129,22 +132,6 @@ describe('EntityHeader', function() {
     var deployAction = output.refs.deployAction;
     assert.equal(deployAction.props.type, 'positive');
     assert.equal(deployAction.props.title, 'Add to canvas');
-  });
-
-  it('displays an unsupported message for multi-series charms', function() {
-    mockEntity.set('series', undefined);
-    var output = testUtils.renderIntoDocument(
-      <juju.components.EntityHeader
-        addNotification={sinon.stub()}
-        entityModel={mockEntity}
-        changeState={sinon.spy()}
-        deployService={sinon.spy()}
-        getBundleYAML={sinon.stub()}
-        importBundleYAML={sinon.stub()}
-        scrollPosition={0} />);
-    var textContent = output.refs.deployAction.innerText;
-    assert.equal(textContent, 'This type of charm can only be deployed from ' +
-      'the command line.');
   });
 
   it('adds a charm when the add button is clicked', function() {

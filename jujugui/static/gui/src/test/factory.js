@@ -34,13 +34,14 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
     */
     _fetchCharmData: function() {
       var names = [
-        'wordpress', 'mongodb', 'mysql', 'mediawiki', 'puppet', 'haproxy',
+        'wordpress', 'mongodb', 'memcached', 'mysql', 'mediawiki', 'puppet', 'haproxy',
         'puppetmaster', 'hadoop'];
       var charms = {};
       names.forEach(function(charmName) {
         var url = 'data/' + charmName + '-apiv4-response.json';
         charms[charmName] = Y.io(url, {sync: true}).responseText;
       });
+
       return charms;
     },
 
@@ -49,13 +50,15 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
       var fakeBakery = {
         sendGetRequest: function(path, success, failure) {
           // Remove the includes and the charmstore path.
-          path = path.split('/meta/any')[0].replace('local/v4/', '');
+          path = path.split('/meta/any')[0].replace('local/v5/', '');
           // Get just the charm name
-          path = path.split('/')[1].split('-');
-          if (path.length > 1) {
-            path = path.slice(0, -1);
+          if (path.indexOf('/') > 0) {
+            path = path.split('/')[1].split('-');
+            if (path.length > 1) {
+              path = path.slice(0, -1);
+            }
+            path = path.join('-');
           }
-          path = path.join('-');
           var xhr = { target: { responseText: null}};
           if (charms[path]) {
             xhr.target.responseText = charms[path];
@@ -67,7 +70,7 @@ YUI(GlobalConfig).add('juju-tests-factory', function(Y) {
           }
         }
       };
-      var fakeCharmstore = new window.jujulib.charmstore('local/', fakeBakery);
+      var fakeCharmstore = new window.jujulib.charmstore('local/v5', fakeBakery);
       // We need to stub out the _makeRequest method so that we can simulate
       // api responses from the server.
       return fakeCharmstore;

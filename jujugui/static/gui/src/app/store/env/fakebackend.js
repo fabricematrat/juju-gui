@@ -494,7 +494,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         exposed: false,
         subordinate: charm.get('is_subordinate'),
         annotations: annotations,
-        config: config
+        config: config,
+        series: charm.get('series')
       });
       this.changes.services[service.get('id')] = [service, true];
       if (Object.keys(annotations).length) {

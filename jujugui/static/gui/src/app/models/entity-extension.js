@@ -58,6 +58,7 @@ YUI.add('entity-extension', function(Y) {
           type = attrs.entityType;
       var entity = {
         description: attrs.description,
+        development: attrs.development,
         displayName: attrs.name.replace('-', ' '),
         downloads: attrs.downloads,
         id: attrs.id,
@@ -65,9 +66,12 @@ YUI.add('entity-extension', function(Y) {
         name: attrs.name,
         owner: attrs.owner || this.ownerFromId(),
         promulgated: attrs.is_approved,
+        resources: attrs.resources,
         revisions: attrs.revisions,
         special: attrs.special,  // XXX Not currently implemented.
+        stable: attrs.stable,
         type: type,
+        unpublished: attrs.unpublished,
         url: attrs.url
       };
       if (type === 'bundle') {
